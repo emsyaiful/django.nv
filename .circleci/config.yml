@@ -68,6 +68,7 @@ workflows:
             branches:
               only:
                 - main
+      - release
       - integration:
           filters:
             branches:
