@@ -16,6 +16,15 @@ jobs:
       - run: |
           pip install -r requirements.txt
           python manage.py test taskManager
+          
+  release:
+    machine: true                                        # What is this for?
+    steps:
+      - checkout
+
+      - run: |
+          docker build -t $DOCKER_USERNAME/django.nv .   # Build the application into Docker image
+          docker push $DOCKER_USERNAME/django.nv         # Push the image into registry
 
   integration:
     docker:
@@ -55,29 +64,16 @@ workflows:
               only:
                 - main
       - test:
-          requires:
-            - build
           filters:
             branches:
               only:
                 - main
       - integration:
-          requires:
-            - test
           filters:
             branches:
               only:
                 - main
       - prod:
-          requires:
-            - integration
-          filters:
-            branches:
-              only:
-                - main
-      - artifact:
-          requires:
-            - prod
           filters:
             branches:
               only:
