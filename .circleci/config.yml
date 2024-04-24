@@ -7,6 +7,11 @@ jobs:
       - run: |                              # similar to "script" in GitLab
           pip install -r requirements.txt
           python manage.py check
+          echo "hello" > hello.txt
+          
+      - store_artifacts:
+          path: hello.txt
+          destination: artifact-file
 
   test:
     docker:
@@ -26,8 +31,13 @@ jobs:
           command: |
             echo "This is an integration step"
             exit 1
+          continue-on-error: true
 
   prod:
+    filters:
+      branches:
+        only:
+          - main
     docker:
       - image: python:3.6
     steps:
